@@ -22,9 +22,15 @@ public class ObsService {
 	@Value("classpath:sql/conceptList.sql")
 	private Resource conceptListSqlResource;
 
+
+	@Value("classpath:sql/allConceptList.sql")
+	private Resource allConceptListSqlResource;
+
 	private String conceptDetailsSql;
 
 	private String conceptListSql;
+
+	private String allConceptListSql;
 
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
@@ -44,10 +50,15 @@ public class ObsService {
 
 	}
 
+	public List<Concept> getAllConcepts() {
+		return jdbcTemplate.query(allConceptListSql, new BeanPropertyRowMapper<>(Concept.class));
+	}
+
 	@PostConstruct
 	public void postConstruct(){
 		this.conceptDetailsSql = BatchUtils.convertResourceOutputToString(conceptDetailsSqlResource);
 		this.conceptListSql = BatchUtils.convertResourceOutputToString(conceptListSqlResource);
+		this.allConceptListSql =  BatchUtils.convertResourceOutputToString(allConceptListSqlResource);
 	}
 
 

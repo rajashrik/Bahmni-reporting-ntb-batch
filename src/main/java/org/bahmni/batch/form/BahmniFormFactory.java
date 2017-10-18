@@ -21,6 +21,8 @@ public class BahmniFormFactory {
 
 	private List<Concept> addMoreAndMultiSelectConcepts;
 
+	private List<Concept> allConceptsSets;
+
 	public BahmniForm createForm(Concept concept, BahmniForm parentForm) {
 		return createForm(concept,parentForm,0);
 	}
@@ -46,7 +48,7 @@ public class BahmniFormFactory {
 		int childDepth = depth+1;
 		for(Concept childConcept: childConcepts){
 
-			if(addMoreAndMultiSelectConcepts.contains(childConcept)){
+			if(allConceptsSets.contains(childConcept)){
 				bahmniForm.addChild(createForm(childConcept, bahmniForm, childDepth));
 			}else if(childConcept.getIsSet() == 0){
 				bahmniForm.addField(childConcept);
@@ -59,6 +61,7 @@ public class BahmniFormFactory {
 	@PostConstruct
 	public void postConstruct(){
 		this.addMoreAndMultiSelectConcepts = obsService.getConceptsByNames(addMoreConceptNames);
+		this.allConceptsSets = obsService.getAllConcepts();
 	}
 
 	public void setObsService(ObsService obsService) {
