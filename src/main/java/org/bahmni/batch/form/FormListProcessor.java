@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 public class FormListProcessor {
 
-	public static final String ALL_FORMS = "Baseline, Case definition";
+	public static final String ALL_FORMS = "Baseline Template";
 
 	@Autowired
 	private ObsService obsService;
