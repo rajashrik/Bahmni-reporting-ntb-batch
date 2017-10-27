@@ -85,10 +85,7 @@ public class BatchConfiguration extends DefaultBatchConfigurer {
 		FlowBuilder<FlowJobBuilder> completeDataExport = jobBuilderFactory.get(FULL_DATA_EXPORT_JOB_NAME)
 				.incrementer(new RunIdIncrementer()).preventRestart()
 				.listener(listener())
-		                .flow(treatmentRegistrationBaseExportStep.getStep())
-						.next(metaDataCodeDictionaryExportStep.getStep())
-		                .next(tbDrugOrderBaseExportStep.getStep())
-		                .next(nonTBDrugOrderBaseExportStep.getStep());
+		                .flow(treatmentRegistrationBaseExportStep.getStep());
 
 		for (BahmniForm form : forms) {
 				ObservationExportStep observationExportStep = observationExportStepFactory.getObject();
