@@ -1,7 +1,10 @@
 package org.bahmni.batch.form.service;
 
 import org.bahmni.batch.BatchUtils;
+import org.bahmni.batch.form.TableQueryFormatter;
+import org.bahmni.batch.form.domain.BahmniForm;
 import org.bahmni.batch.form.domain.Concept;
+import org.bahmni.batch.form.domain.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -11,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -26,7 +30,13 @@ public class ObsService {
 	@Value("classpath:sql/allConceptList.sql")
 	private Resource allConceptListSqlResource;
 
+
+	@Value("classpath:sql/createTables.sql")
+	private Resource createTablesSqlResource;
+
 	private String conceptDetailsSql;
+
+	private String createTablesSql;
 
 	private String conceptListSql;
 
@@ -59,7 +69,19 @@ public class ObsService {
 		this.conceptDetailsSql = BatchUtils.convertResourceOutputToString(conceptDetailsSqlResource);
 		this.conceptListSql = BatchUtils.convertResourceOutputToString(conceptListSqlResource);
 		this.allConceptListSql =  BatchUtils.convertResourceOutputToString(allConceptListSqlResource);
+		this.createTablesSql =  BatchUtils.convertResourceOutputToString(createTablesSqlResource);
 	}
+
+
+	public void createTables(BahmniForm form) {
+		TableQueryFormatter formatter = new TableQueryFormatter(form);
+		String query = formatter.getQuery();
+
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		jdbcTemplate.update(query,parameters);
+
+	}
+
 
 
 }

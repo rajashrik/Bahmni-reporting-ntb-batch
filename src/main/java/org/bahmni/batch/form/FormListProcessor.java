@@ -33,6 +33,10 @@ public class FormListProcessor {
 
 		List<BahmniForm> flattenedFormList = new ArrayList<>(forms);
 		fetchExportFormsList(forms, flattenedFormList);
+		for (BahmniForm form : flattenedFormList) {
+			obsService.createTables(form);
+		}
+
 		return flattenedFormList;
 	}
 
