@@ -2,14 +2,11 @@ package org.bahmni.batch.form;
 
 import org.bahmni.batch.form.domain.BahmniForm;
 import org.bahmni.batch.form.domain.Concept;
-import org.bahmni.batch.form.domain.Table;
+import org.bahmni.batch.form.domain.TableColumns;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by rajashrk on 10/31/17.
- */
 public class TableQueryFormatter {
 
     private BahmniForm form;
@@ -19,23 +16,21 @@ public class TableQueryFormatter {
     }
 
     public String getQuery() {
-
         String fields = "";
-        List<Table> columns = getTableColumns();
-        int count = 0;
-        for(count = 0 ; count < columns.size(   ); count++) {
-            Table table = columns.get(count);
+        List<TableColumns> columns = getTableColumns();
+        int count;
+        for(count = 0 ; count < columns.size(); count++) {
+            TableColumns tableColumns = columns.get(count);
             if (count != columns.size() - 1)
-                fields = fields + table.toString() + ",";
+                fields = fields + tableColumns.toString() + ",";
             else
-                fields = fields + table.toString() ;
+                fields = fields + tableColumns.toString() ;
         }
-        String params = form.getDisplayName().replace(' ','_').replace('-','_').replaceAll("[?()]*","") + " " +  "("+ fields + ");";
+        String params = formatColumnOrTableName(form.getDisplayName()) + " " +  "("+ fields + ");";
         String query  = "CREATE table if not EXISTS " + params;
         return query;
 
     }
-
 
     private String getHeader() {
         StringBuilder sb = new StringBuilder();
@@ -54,15 +49,19 @@ public class TableQueryFormatter {
     }
 
 
-    private List<Table> getTableColumns(){
+    private List<TableColumns> getTableColumns(){
         String headers = getHeader();
         String[] columns = headers.split(",");
-        List<Table> tables = new ArrayList<>();
-        for( String s : columns){
-            s = s.replace(' ','_').replace('-','_').replaceAll("[?()]*","");
-            tables.add(new Table(s,"varchar(40)"));
+        List<TableColumns> tableColumns = new ArrayList<>();
+        for( String columnName : columns){
+            columnName = formatColumnOrTableName(columnName);
+            tableColumns.add(new TableColumns(columnName,"varchar(40)"));
         }
-        return tables;
+        return tableColumns;
+    }
+
+    private String formatColumnOrTableName(String name){
+        return name.replace(' ','_').replace('-','_').replaceAll("[?()]*","");
     }
 
 

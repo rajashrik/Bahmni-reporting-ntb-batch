@@ -3,16 +3,16 @@ package org.bahmni.batch.form.domain;
 /**
  * Created by rajashrk on 10/31/17.
  */
-public class Table {
+public class TableColumns {
     private String columnName;
     private String dataType;
 
-    public Table(String columnName, String dataType) {
+    public TableColumns(String columnName, String dataType) {
         this.columnName = columnName;
         this.dataType = dataType;
     }
 
-    public Table() {
+    public TableColumns() {
     }
 
     public String getColumnName() {
