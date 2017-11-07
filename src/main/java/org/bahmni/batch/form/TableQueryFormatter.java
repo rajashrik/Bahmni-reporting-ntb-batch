@@ -3,31 +3,31 @@ package org.bahmni.batch.form;
 import org.bahmni.batch.form.domain.BahmniForm;
 import org.bahmni.batch.form.domain.Concept;
 import org.bahmni.batch.form.domain.TableColumns;
+import org.bahmni.batch.form.domain.TableMetadata;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TableQueryFormatter {
 
     private BahmniForm form;
 
+    private TableMetadata metadata;
+
     public TableQueryFormatter(BahmniForm form) {
         this.form = form;
     }
 
     public String getQuery() {
-        String fields = "";
-        List<TableColumns> columns = getTableColumns();
-        int count;
-        for(count = 0 ; count < columns.size(); count++) {
-            TableColumns tableColumns = columns.get(count);
-            if (count != columns.size() - 1)
-                fields = fields + tableColumns.toString() + ",";
-            else
-                fields = fields + tableColumns.toString() ;
-        }
-        String params = formatColumnOrTableName(form.getDisplayName()) + " " +  "("+ fields + ");";
-        String query  = "CREATE table if not EXISTS " + params;
+        final String[] fields = {""};
+        setUpTableMetadata();
+        metadata.getFieldAndDataType().forEach((k,v) -> fields[0] += k + " " + v + "," );
+
+//        metadata.getForeignKeyAndReferences().forEach((k,v) -> fields[0] +=  "foreign key "+ k + " references " + v + "("+ k+ ")"+"," );
+
+        String formattedFields = fields[0].replaceAll("[,]$","");
+        String params = formatColumnOrTableName(form.getDisplayName()) + " " + "(" + formattedFields + ");";
+
+        String query = "CREATE table if not EXISTS " + params;
         return query;
 
     }
@@ -49,19 +49,18 @@ public class TableQueryFormatter {
     }
 
 
-    private List<TableColumns> getTableColumns(){
+    private void setUpTableMetadata() {
+        metadata = new TableMetadata();
         String headers = getHeader();
         String[] columns = headers.split(",");
-        List<TableColumns> tableColumns = new ArrayList<>();
-        for( String columnName : columns){
+        for (String columnName : columns) {
             columnName = formatColumnOrTableName(columnName);
-            tableColumns.add(new TableColumns(columnName,"varchar(40)"));
+            metadata.setColumn(columnName, "varchar(40)");
         }
-        return tableColumns;
     }
 
-    private String formatColumnOrTableName(String name){
-        return name.replace(' ','_').replace('-','_').replaceAll("[?()]*","");
+    private String formatColumnOrTableName(String name) {
+        return name.replace(' ', '_').replace('-', '_').replaceAll("[?()]*", "");
     }
 
 
