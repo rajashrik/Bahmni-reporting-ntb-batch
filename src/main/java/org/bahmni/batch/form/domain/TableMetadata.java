@@ -12,6 +12,7 @@ public class TableMetadata {
 
     private Map<String,String> fieldAndDataType;
     private Map<String,String> foreignKeyAndReferences;
+    private String primaryKey;
 
     public TableMetadata() {
         fieldAndDataType = new HashMap<>();
@@ -40,6 +41,9 @@ public class TableMetadata {
             setForeignKeyAndReferences(field, dataType);
         } else {
             fieldAndDataType.put(field, dataType);
+            if (field.matches("id[_a-z]*")) {
+                primaryKey = field;
+            }
         }
     }
 
@@ -48,6 +52,7 @@ public class TableMetadata {
         foreignKeyAndReferences.put(field, reference_table);
     }
 
-
-
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
 }

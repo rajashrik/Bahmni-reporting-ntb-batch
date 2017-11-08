@@ -20,9 +20,9 @@ public class TableQueryFormatter {
     public String getQuery() {
         final String[] fields = {""};
         setUpTableMetadata();
-        metadata.getFieldAndDataType().forEach((k,v) -> fields[0] += k + " " + v + "," );
-
-//        metadata.getForeignKeyAndReferences().forEach((k,v) -> fields[0] +=  "foreign key "+ k + " references " + v + "("+ k+ ")"+"," );
+        metadata.getFieldAndDataType().forEach((key,value) -> fields[0] += key + " " + value + "," );
+        fields[0] += "primary key  (" + metadata.getPrimaryKey() + "),";
+        metadata.getForeignKeyAndReferences().forEach((key,value) -> fields[0] +=  value + " varchar(40),"+ "  foreign key "+ value + "_fk" + "(" +  value + ")"+ " references " + value + "("+ key+ ")"+"," );
 
         String formattedFields = fields[0].replaceAll("[,]$","");
         String params = formatColumnOrTableName(form.getDisplayName()) + " " + "(" + formattedFields + ");";
