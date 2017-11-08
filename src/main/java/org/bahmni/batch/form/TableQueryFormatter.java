@@ -2,10 +2,8 @@ package org.bahmni.batch.form;
 
 import org.bahmni.batch.form.domain.BahmniForm;
 import org.bahmni.batch.form.domain.Concept;
-import org.bahmni.batch.form.domain.TableColumns;
 import org.bahmni.batch.form.domain.TableMetadata;
 
-import java.util.List;
 
 public class TableQueryFormatter {
 
@@ -20,11 +18,11 @@ public class TableQueryFormatter {
     public String getQuery() {
         final String[] fields = {""};
         setUpTableMetadata();
-        metadata.getFieldAndDataType().forEach((key,value) -> fields[0] += key + " " + value + "," );
+        metadata.getFieldAndDataType().forEach((key, value) -> fields[0] += key + " " + value + ",");
         fields[0] += "primary key  (" + metadata.getPrimaryKey() + "),";
-        metadata.getForeignKeyAndReferences().forEach((key,value) -> fields[0] +=  value + " varchar(40),"+ "  foreign key "+ value + "_fk" + "(" +  value + ")"+ " references " + value + "("+ key+ ")"+"," );
+        metadata.getForeignKeyAndReferences().forEach((key, value) -> fields[0] += value + " varchar(40)," + "  foreign key " + value + "_fk" + "(" + value + ")" + " references " + value + "(" + key + ")" + ",");
 
-        String formattedFields = fields[0].replaceAll("[,]$","");
+        String formattedFields = fields[0].replaceAll("[,]$", "");
         String params = formatColumnOrTableName(form.getDisplayName()) + " " + "(" + formattedFields + ");";
 
         String query = "CREATE table if not EXISTS " + params;
